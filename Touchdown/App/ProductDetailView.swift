@@ -11,6 +11,8 @@ struct ProductDetailView: View {
     
     //MARK: - PROPERTIES
     
+    @EnvironmentObject var shop: Shop
+    
     //MARK: - BODY
     
     var body: some View {
@@ -28,24 +30,50 @@ struct ProductDetailView: View {
             // DETAIL TOP PART
             TopPartDetailView()
                 .padding(.horizontal)
+                .zIndex(1)
             
             // DETAIL BOTTOM PART
+            VStack(alignment: .center, spacing: 0) {
+                
+                // RATINGS + SIZES
+                RatingsSizesDetailView()
+                    .padding(.top, -20)
+                    .padding(.bottom, 10)
+                
+                // DESCRIPTION
+                ScrollView(.vertical, showsIndicators: false) {
+                    Text(shop.selectedProduct?.description ?? sampleProduct.description)
+                        .font(.system(.body, design: .rounded))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.leading)
+                } //: SCROLL
+                
+                // QUANTITY + FAVOURITE
+                
+                QuantityFavouriteDetailView()
+                    .padding(.vertical, 10)
+                
+                // ADD TO CART
+                AddToCartDetailView()
+                    .padding(.bottom, 20)
+                Spacer()
+            } //: VSTACK
+            .padding(.horizontal)
+            .background(
+                Color.white
+                    .clipShape(CustomShape())
+                    .padding(.top, -105)
+            )
             
-            // RATINGS + SIZES
             
-            // DESCRIPTION
-            
-            // QUANTITY + FAVOURITE
-            
-            // ADD TO CART
-            Spacer()
         } //: VSTACK
+        .zIndex(0)
         .edgesIgnoringSafeArea(.all)
         .background(
             Color(
-                red: sampleProduct.red,
-                green: sampleProduct.green,
-                blue: sampleProduct.blue)
+                red: shop.selectedProduct?.red ?? sampleProduct.red,
+                green: shop.selectedProduct?.green ?? sampleProduct.green,
+                blue: shop.selectedProduct?.blue ?? sampleProduct.blue)
         ).edgesIgnoringSafeArea(.all)
     }
 }
@@ -55,5 +83,6 @@ struct ProductDetailView: View {
 struct ProductDetailView_Previews: PreviewProvider {
     static var previews: some View {
         ProductDetailView()
+            .environmentObject(Shop())
     }
 }
